@@ -23,6 +23,7 @@ class Orders with ChangeNotifier {
 
   // --- adding cart items to the order list ------
   void addOrder(List<CartItem> cartProducts, double total) {
+    const url = "https://shop-venue-9304b.firebaseio.com/orders.json";
     _orders.insert(
         0,
         OrderItem(
