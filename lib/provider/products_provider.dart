@@ -139,7 +139,7 @@ class Products with ChangeNotifier {
 
   // this function deletes the current product
   Future<void> deleteProduct(String id) async {
-    final url = "https://shop-venue-9304b.firebaseio/products/$id.json";
+    final url = "https://shop-venue-9304b.firebaseio.com/products/$id.json";
     final existingProductIndex = items.indexWhere((prod) => prod.id == id);
     var existingProduct = _items[existingProductIndex];
     _items.removeAt(existingProductIndex);
