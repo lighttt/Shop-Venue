@@ -6,6 +6,9 @@ import 'package:shopvenue/models/product.dart';
 import 'package:http/http.dart' as http;
 
 class Products with ChangeNotifier {
+  final String _authToken;
+  final String _userId;
+
   List<Product> _items = [
 //    Product(
 //      id: "first",
@@ -46,6 +49,8 @@ class Products with ChangeNotifier {
 //    )
   ];
 
+  Products(this._authToken, this._userId, this._items);
+
   List<Product> get items {
     return [..._items];
   }
@@ -60,7 +65,8 @@ class Products with ChangeNotifier {
 
   //this function adds new product
   Future<void> addProduct(Product product) async {
-    const url = "https://shop-venue-9304b.firebaseio.com/products.json";
+    final url =
+        "https://shop-venue-9304b.firebaseio.com/products.json?auth=$_authToken";
     try {
       final response = await http.post(url,
           body: json.encode({
@@ -68,7 +74,6 @@ class Products with ChangeNotifier {
             'price': product.price,
             'description': product.description,
             'imageURL': product.imageURL,
-            'isFavourite': product.isFavourite,
           }));
       // the future gives a response after posting to the database
       print(json.decode(response.body)['name']);
@@ -91,11 +96,17 @@ class Products with ChangeNotifier {
 
   //this function fetches the products from firebase
   Future<void> fetchAndSetProducts() async {
-    const url = "https://shop-venue-9304b.firebaseio.com/products.json";
+    final url =
+        "https://shop-venue-9304b.firebaseio.com/products.json?auth=$_authToken";
     try {
       final response = await http.get(url);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
       print(extractedData.toString());
+
+      final favouriteResponse = await http.get(
+          "https://shop-venue-9304b.firebaseio.com/userFavourites/$_userId.json?auth=$_authToken");
+      final favouriteData = json.decode(favouriteResponse.body);
+
       final List<Product> loadedProducts = [];
       extractedData.forEach((prodId, prodData) {
         loadedProducts.add(Product(
@@ -103,7 +114,8 @@ class Products with ChangeNotifier {
           title: prodData['title'],
           description: prodData["description"],
           price: double.parse(prodData['price'].toString()),
-          isFavourite: prodData['isFavourite'],
+          isFavourite:
+              favouriteData == null ? false : favouriteData[prodId] ?? false,
           imageURL: prodData['imageURL'],
         ));
       });
@@ -121,7 +133,8 @@ class Products with ChangeNotifier {
     final prodIndex = _items.indexWhere((prod) => prod.id == id);
     try {
       if (prodIndex >= 0) {
-        final url = "https://shop-venue-9304b.firebaseio.com/products/$id.json";
+        final url =
+            "https://shop-venue-9304b.firebaseio.com/products/$id.json?auth=$_authToken";
         await http.patch(url,
             body: json.encode({
               'title': upProduct.title,
@@ -140,7 +153,8 @@ class Products with ChangeNotifier {
 
   // this function deletes the current product
   Future<void> deleteProduct(String id) async {
-    final url = "https://shop-venue-9304b.firebaseio.com/products/$id.json";
+    final url =
+        "https://shop-venue-9304b.firebaseio.com/products/$id.json?auth=$_authToken";
     final existingProductIndex = items.indexWhere((prod) => prod.id == id);
     var existingProduct = _items[existingProductIndex];
     _items.removeAt(existingProductIndex);
