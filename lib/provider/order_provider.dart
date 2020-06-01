@@ -19,9 +19,10 @@ class OrderItem {
 
 class Orders with ChangeNotifier {
   final String _authToken;
+  final String _userId;
   List<OrderItem> _orders = [];
 
-  Orders(this._authToken, this._orders);
+  Orders(this._authToken, this._userId, this._orders);
 
   List<OrderItem> get orders {
     return [..._orders];
@@ -30,7 +31,7 @@ class Orders with ChangeNotifier {
   // --- adding cart items to the order list ------
   Future<void> addOrder(List<CartItem> cartProducts, double total) async {
     final url =
-        "https://shop-venue-9304b.firebaseio.com/orders.json?auth=$_authToken";
+        "https://shop-venue-9304b.firebaseio.com/orders/$_userId.json?auth=$_authToken";
     try {
       final response = await http.post(url,
           body: json.encode({
@@ -62,7 +63,7 @@ class Orders with ChangeNotifier {
   // fetching order from the firebase
   Future<void> fetchAndSetOrders() async {
     final url =
-        "https://shop-venue-9304b.firebaseio.com/orders.json?auth=$_authToken";
+        "https://shop-venue-9304b.firebaseio.com/orders/$_userId.json?auth=$_authToken";
     try {
       final response = await http.get(url);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
@@ -85,7 +86,7 @@ class Orders with ChangeNotifier {
                 .toList(),
             dateTime: DateTime.parse(orderData['dateTime'])));
       });
-      _orders = _loadedOrders;
+      _orders = _loadedOrders.reversed.toList();
       notifyListeners();
     } catch (error) {
       throw (error);
