@@ -127,7 +127,6 @@ class Products with ChangeNotifier {
       print(_items[0].price);
       notifyListeners();
     } catch (error) {
-      print(error.message);
       throw (error);
     }
   }

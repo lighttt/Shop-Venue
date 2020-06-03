@@ -10,6 +10,7 @@ import 'package:shopvenue/screens/edit_product_screen.dart';
 import 'package:shopvenue/screens/order_screen.dart';
 import 'package:shopvenue/screens/product_details_screen.dart';
 import 'package:shopvenue/screens/product_overview_screen.dart';
+import 'package:shopvenue/screens/splash_screen.dart';
 import 'package:shopvenue/screens/user_product_screen.dart';
 
 void main() => runApp(MyApp());
@@ -43,7 +44,15 @@ class MyApp extends StatelessWidget {
                 primaryColor: Colors.blueGrey,
                 accentColor: Colors.red,
                 fontFamily: "Lato"),
-            home: auth.isAuth ? ProductOverviewScreen() : AuthScreen(),
+            home: auth.isAuth
+                ? ProductOverviewScreen()
+                : FutureBuilder(
+                    future: auth.tryAutoLogin(),
+                    builder: (ctx, authResult) =>
+                        authResult.connectionState == ConnectionState.waiting
+                            ? SplashScreen()
+                            : AuthScreen(),
+                  ),
             routes: {
               ProductDetailsScreen.routeName: (ctx) => ProductDetailsScreen(),
               CartScreen.routeName: (ctx) => CartScreen(),
