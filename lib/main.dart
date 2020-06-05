@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shopvenue/helper/custom_route.dart';
 import 'package:shopvenue/provider/auth_provider.dart';
 import 'package:shopvenue/provider/cart_provider.dart';
 import 'package:shopvenue/provider/order_provider.dart';
@@ -43,7 +44,11 @@ class MyApp extends StatelessWidget {
             theme: ThemeData(
                 primaryColor: Colors.blueGrey,
                 accentColor: Colors.red,
-                fontFamily: "Lato"),
+                fontFamily: "Lato",
+                pageTransitionsTheme: PageTransitionsTheme(builders: {
+                  TargetPlatform.android: CustomPageTranisitionBuilder(),
+                  TargetPlatform.iOS: CustomPageTranisitionBuilder(),
+                })),
             home: auth.isAuth
                 ? ProductOverviewScreen()
                 : FutureBuilder(

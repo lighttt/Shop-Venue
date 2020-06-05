@@ -11,44 +11,56 @@ class ProductDetailsScreen extends StatelessWidget {
     final selectedProduct =
         Provider.of<Products>(context, listen: false).findById(id);
     return Scaffold(
-      appBar: AppBar(
-        title: Text(selectedProduct.title),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            Hero(
-              child: Container(
-                height: 300,
-                width: double.infinity,
-                child: Image.network(
-                  selectedProduct.imageURL,
-                  fit: BoxFit.cover,
+      body: CustomScrollView(
+        slivers: <Widget>[
+          SliverAppBar(
+            expandedHeight: 300,
+            pinned: true,
+            flexibleSpace: FlexibleSpaceBar(
+              title: Text(
+                selectedProduct.title,
+              ),
+              background: Hero(
+                child: Container(
+                  height: 300,
+                  width: double.infinity,
+                  child: Image.network(
+                    selectedProduct.imageURL,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                tag: 'product$id',
+              ),
+            ),
+          ),
+          SliverList(
+            delegate: SliverChildListDelegate([
+              SizedBox(
+                height: 10,
+              ),
+              Text(
+                '\$ ${selectedProduct.price}',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    color: Theme.of(context).accentColor, fontSize: 28),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                child: Text(
+                  selectedProduct.description,
+                  textAlign: TextAlign.center,
+                  softWrap: true,
                 ),
               ),
-              tag: 'product$id',
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Text(
-              '\$ ${selectedProduct.price}',
-              style:
-                  TextStyle(color: Theme.of(context).accentColor, fontSize: 28),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              child: Text(
-                selectedProduct.description,
-                textAlign: TextAlign.center,
-                softWrap: true,
+              SizedBox(
+                height: 700,
               ),
-            )
-          ],
-        ),
+            ]),
+          )
+        ],
       ),
     );
   }
