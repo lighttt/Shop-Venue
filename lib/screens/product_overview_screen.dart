@@ -10,6 +10,9 @@ import 'package:shopvenue/widgets/product_grid.dart';
 enum FilterOptions { Favourites, All }
 
 class ProductOverviewScreen extends StatefulWidget {
+
+  static const  String routeName = "/product_overview";
+
   @override
   _ProductOverviewScreenState createState() => _ProductOverviewScreenState();
 }

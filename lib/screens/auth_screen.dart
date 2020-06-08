@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shopvenue/exception/http_exception.dart';
 import 'package:shopvenue/provider/auth_provider.dart';
+import 'package:shopvenue/screens/product_overview_screen.dart';
 
 enum AuthMode { Signup, Login }
 
@@ -160,6 +161,8 @@ class _AuthCardState extends State<AuthCard>
         // Log user in
         await Provider.of<Auth>(context, listen: false)
             .login(_authData["email"], _authData["password"]);
+        Navigator.of(context)
+            .pushReplacementNamed(ProductOverviewScreen.routeName);
       } else {
         // Sign user up
         await Provider.of<Auth>(context, listen: false)
