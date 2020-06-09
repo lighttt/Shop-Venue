@@ -161,13 +161,13 @@ class _AuthCardState extends State<AuthCard>
         // Log user in
         await Provider.of<Auth>(context, listen: false)
             .login(_authData["email"], _authData["password"]);
-        Navigator.of(context)
-            .pushReplacementNamed(ProductOverviewScreen.routeName);
       } else {
         // Sign user up
         await Provider.of<Auth>(context, listen: false)
             .signUp(_authData["email"], _authData["password"]);
       }
+      Navigator.of(context)
+          .pushReplacementNamed(ProductOverviewScreen.routeName);
     } on HttpException catch (error) {
       var errorMessage = "Authenication failed";
       if (error.toString().contains("EMAIL_EXITS")) {

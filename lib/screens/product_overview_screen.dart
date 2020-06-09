@@ -5,13 +5,13 @@ import 'package:shopvenue/provider/products_provider.dart';
 import 'package:shopvenue/screens/cart_screen.dart';
 import 'package:shopvenue/widgets/app_drawer.dart';
 import 'package:shopvenue/widgets/badge.dart';
+import 'package:shopvenue/widgets/custom_search_delegate.dart';
 import 'package:shopvenue/widgets/product_grid.dart';
 
 enum FilterOptions { Favourites, All }
 
 class ProductOverviewScreen extends StatefulWidget {
-
-  static const  String routeName = "/product_overview";
+  static const String routeName = "/product_overview";
 
   @override
   _ProductOverviewScreenState createState() => _ProductOverviewScreenState();
@@ -43,51 +43,58 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Shop Venue'),
-          actions: <Widget>[
-            PopupMenuButton(
-                onSelected: (FilterOptions selectedOption) {
-                  setState(() {
-                    if (selectedOption == FilterOptions.Favourites) {
-                      showFavourites = true;
-                    } else {
-                      showFavourites = false;
-                    }
-                  });
-                },
-                icon: Icon(Icons.more_vert),
-                itemBuilder: (_) => [
-                      PopupMenuItem(
-                        child: Text('Show Favourites'),
-                        value: FilterOptions.Favourites,
-                      ),
-                      PopupMenuItem(
-                        child: Text('Show All'),
-                        value: FilterOptions.All,
-                      ),
-                    ]),
-            Consumer<Cart>(
-              builder: (ctx, cart, child) {
-                return Badge(
-                  child: child,
-                  value: cart.itemCount.toString(),
-                );
+      appBar: AppBar(
+        title: Text('Shop Venue'),
+        actions: <Widget>[
+          PopupMenuButton(
+              onSelected: (FilterOptions selectedOption) {
+                setState(() {
+                  if (selectedOption == FilterOptions.Favourites) {
+                    showFavourites = true;
+                  } else {
+                    showFavourites = false;
+                  }
+                });
               },
-              child: IconButton(
-                icon: Icon(Icons.shopping_cart),
-                onPressed: () {
-                  Navigator.pushNamed(context, CartScreen.routeName);
-                },
-              ),
+              icon: Icon(Icons.more_vert),
+              itemBuilder: (_) => [
+                    PopupMenuItem(
+                      child: Text('Show Favourites'),
+                      value: FilterOptions.Favourites,
+                    ),
+                    PopupMenuItem(
+                      child: Text('Show All'),
+                      value: FilterOptions.All,
+                    ),
+                  ]),
+          Consumer<Cart>(
+            builder: (ctx, cart, child) {
+              return Badge(
+                child: child,
+                value: cart.itemCount.toString(),
+              );
+            },
+            child: IconButton(
+              icon: Icon(Icons.shopping_cart),
+              onPressed: () {
+                Navigator.pushNamed(context, CartScreen.routeName);
+              },
+            ),
+          )
+        ],
+      ),
+      drawer: AppDrawer(),
+      body: _isLoading
+          ? Center(
+              child: CircularProgressIndicator(),
             )
-          ],
-        ),
-        drawer: AppDrawer(),
-        body: _isLoading
-            ? Center(
-                child: CircularProgressIndicator(),
-              )
-            : ProductGrid(showFavourites));
+          : ProductGrid(showFavourites),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showSearch(context: context, delegate: CustomSearchDelegate());
+        },
+        child: Icon(Icons.search),
+      ),
+    );
   }
 }

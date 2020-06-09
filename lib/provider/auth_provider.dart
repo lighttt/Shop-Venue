@@ -55,6 +55,12 @@ class Auth with ChangeNotifier {
           ),
         ),
       );
+      String userType;
+      if (urlSegment == "signUp") {
+        userType = await addUserToDatabase(_token, userId, email);
+      } else {
+        userType = await getUser(_token, _userId);
+      }
       _autoLogout();
       notifyListeners();
       // initialized shared preferences
@@ -62,7 +68,9 @@ class Auth with ChangeNotifier {
       final userData = json.encode({
         'token': _token,
         'userId': _userId,
-        'expiryDate': _expiryDate.toIso8601String()
+        'expiryDate': _expiryDate.toIso8601String(),
+        'email': email,
+        'userType': userType,
       });
       prefs.setString("userData", userData);
     } catch (error) {
@@ -118,5 +126,37 @@ class Auth with ChangeNotifier {
     notifyListeners();
     _autoLogout();
     return true;
+  }
+
+  Future<String> addUserToDatabase(
+      String authToken, String userId, String email) async {
+    final url =
+        "https://shop-venue-9304b.firebaseio.com/users/$userId.json?auth=$authToken";
+    try {
+      final response = await http.put(url,
+          body: json.encode({
+            'userId': userId,
+            'email': email,
+            'userType': "client",
+          }));
+      print(json.decode(response.body));
+      return "client";
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  //this function fetches the products from firebase
+  Future<String> getUser(String authToken, String userId) async {
+    final url =
+        "https://shop-venue-9304b.firebaseio.com/users/$userId.json?auth=$authToken";
+    try {
+      final response = await http.get(url);
+      final extractedData = json.decode(response.body) as Map<String, dynamic>;
+      print(extractedData.toString());
+      return extractedData["userType"];
+    } catch (error) {
+      throw (error);
+    }
   }
 }
