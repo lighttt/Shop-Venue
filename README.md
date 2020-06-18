@@ -1,6 +1,6 @@
-# shopvenue
+# Shop Venu
 
-A Ecommerce Flutter application.
+A Flutter Ecommerce application.
 
 ## Features
 
